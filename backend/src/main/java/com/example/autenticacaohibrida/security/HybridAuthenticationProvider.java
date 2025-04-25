@@ -93,7 +93,7 @@ public class HybridAuthenticationProvider implements AuthenticationProvider {
         
         try {
             List<String> groups = ldapTemplate.search("ou=groups", filter.toString(), 
-                (DirContextOperations ctx) -> ctx.getStringAttribute("cn"));
+                (ctx) -> (String) ctx.getAttributes().get("cn").get());
             
             return groups.contains("admins");
         } catch (Exception e) {
