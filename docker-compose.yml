@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Serviço do banco de dados Oracle
+  oracle:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle-db
+    environment:
+      - ORACLE_PASSWORD=oracle
+      - ORACLE_DATABASE=XEPDB1
+      - APP_USER=app_user
+      - APP_USER_PASSWORD=app_password
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./oracle/init.sql:/container-entrypoint-initdb.d/init.sql
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "app_user/app_password@//localhost:1521/XEPDB1", "AS", "SYSDBA"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - poc-network
+
+  # Serviço do backend Spring Boot
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spring-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle:1521/XEPDB1
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=app_password
+      - SPRING_PROFILES_ACTIVE=docker
+      - LDAP_URL=ldap://ldap:389
+      - LDAP_BASE_DN=dc=example,dc=org
+      - LDAP_USERNAME=cn=admin,dc=example,dc=org
+      - LDAP_PASSWORD=admin
+    depends_on:
+      oracle:
+        condition: service_healthy
+      ldap:
+        condition: service_started
+    networks:
+      - poc-network
+
+  # Serviço do frontend Angular
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: angular-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - poc-network
+
+  # Serviço LDAP para simular Active Directory
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ldap-server
+    environment:
+      - LDAP_ORGANISATION=Example Inc.
+      - LDAP_DOMAIN=example.org
+      - LDAP_ADMIN_PASSWORD=admin
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    networks:
+      - poc-network
+
+  # Serviço de administração LDAP
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+      - PHPLDAPADMIN_HTTPS=false
+    ports:
+      - "8081:80"
+    depends_on:
+      - ldap
+    networks:
+      - poc-network
+
+  # Serviço para simular F5 com OAuth2
+  f5-simulator:
+    build:
+      context: ./f5-config
+      dockerfile: Dockerfile
+    container_name: f5-simulator
+    ports:
+      - "8090:8090"
+    environment:
+      - BACKEND_URL=http://backend:8080
+    depends_on:
+      - backend
+    networks:
+      - poc-network
+
+volumes:
+  oracle-data:
+
+networks:
+  poc-network:
+    driver: bridge

@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: app_user
+    password: app_password
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
+# Configuração LDAP
+ldap:
+  url: ldap://localhost:389
+  base-dn: dc=example,dc=org
+  username: cn=admin,dc=example,dc=org
+  password: admin
+
+# Configuração JWT
+jwt:
+  public:
+    key: classpath:certs/public.pem
+  private:
+    key: classpath:certs/private.pem
+
+# Configuração do servidor
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Configuração de logging
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.example.autenticacaohibrida: DEBUG
+    org.springframework.ldap: DEBUG

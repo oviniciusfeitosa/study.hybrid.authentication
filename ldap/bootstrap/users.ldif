@@ -1,0 +1,52 @@
+dn: ou=users,dc=example,dc=org
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+ou: groups
+
+dn: cn=user1,ou=users,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user1
+sn: LDAP
+uid: user1
+uidNumber: 10000
+gidNumber: 10000
+homeDirectory: /home/user1
+loginShell: /bin/bash
+userPassword: {SSHA}Vb6EDcXeOCfUZcSV9IQNgaxP9taRdKAp
+mail: user1@example.org
+givenName: Usuario
+displayName: Usuario LDAP
+
+dn: cn=admin1,ou=users,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: admin1
+sn: LDAP
+uid: admin1
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/admin1
+loginShell: /bin/bash
+userPassword: {SSHA}Vb6EDcXeOCfUZcSV9IQNgaxP9taRdKAp
+mail: admin1@example.org
+givenName: Administrador
+displayName: Administrador LDAP
+
+dn: cn=users,ou=groups,dc=example,dc=org
+objectClass: posixGroup
+cn: users
+gidNumber: 10000
+memberUid: user1
+memberUid: admin1
+
+dn: cn=admins,ou=groups,dc=example,dc=org
+objectClass: posixGroup
+cn: admins
+gidNumber: 10001
+memberUid: admin1
