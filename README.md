@@ -110,19 +110,19 @@ Para verificar os logs dos serviços:
 
 ```bash
 # Log do backend
-docker-compose logs -f spring-backend
+docker compose logs -f spring-backend
 
 # Log do frontend
-docker-compose logs -f angular-frontend
+docker compose logs -f angular-frontend
 
 # Log do simulador F5
-docker-compose logs -f f5-simulator
+docker compose logs -f f5-simulator
 
 # Log do banco Oracle
-docker-compose logs -f oracle-db
+docker compose logs -f oracle-db
 
 # Log do servidor LDAP
-docker-compose logs -f ldap-server
+docker compose logs -f ldap-server
 ```
 
 ## Parando os Serviços
@@ -130,13 +130,13 @@ docker-compose logs -f ldap-server
 Para parar todos os serviços:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 Para parar e remover volumes (isso apagará os dados do banco):
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Solução de Problemas
@@ -156,7 +156,7 @@ Verifique se as portas necessárias estão disponíveis:
 Verifique se os serviços LDAP e Oracle estão funcionando corretamente:
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### Problema: Erro ao construir imagens Docker

@@ -19,12 +19,12 @@ fi
 
 # Parar containers existentes
 echo -e "${YELLOW}Parando containers existentes...${NC}"
-docker-compose down
+docker compose down
 
 # Construir e iniciar os serviços
 echo -e "${YELLOW}Construindo e iniciando os serviços...${NC}"
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 
 # Aguardar serviços iniciarem
 echo -e "${YELLOW}Aguardando serviços iniciarem...${NC}"
@@ -39,7 +39,7 @@ check_service() {
   echo -n "Verificando $service "
   
   while [ $attempt -le $max_attempts ]; do
-    if docker-compose ps | grep $service | grep -q "Up"; then
+    if docker compose ps | grep $service | grep -q "Up"; then
       echo -e "${GREEN}✓${NC}"
       return 0
     fi
